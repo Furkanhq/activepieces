@@ -4,7 +4,7 @@ import {
   ThirdPartyAuthnProvidersToShowMap,
 } from '@activepieces/shared';
 import { t } from 'i18next';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
 import { useTheme } from '@/components/providers/theme-provider';
@@ -114,18 +114,13 @@ const AuthSeparator = ({
 };
 
 const AuthImage = () => {
-  const [loaded, setLoaded] = useState(false);
-  const onLoad = useCallback(() => setLoaded(true), []);
-
   return (
-    <img
-      src="https://cdn.activepieces.com/assets/auth-bg.webp"
-      alt=""
-      onLoad={onLoad}
-      className={cn(
-        'absolute inset-0 w-full h-full object-cover transition-opacity duration-300',
-        loaded ? 'opacity-100' : 'opacity-0',
-      )}
+    <div
+      className="absolute inset-0 w-full h-full"
+      style={{
+        background:
+          'radial-gradient(circle at 20% 20%, #33e0ff 0%, transparent 45%), radial-gradient(circle at 80% 80%, #a685fa 0%, transparent 45%), #0a0a0f',
+      }}
     />
   );
 };

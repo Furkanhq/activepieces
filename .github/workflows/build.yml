@@ -1,0 +1,45 @@
+# FlowLogic Engine — white-labeled image build.
+# On every push to `flowlogic-production` (or manual dispatch) it strips the
+# non-MIT enterprise code, builds the image, and pushes it to GHCR as
+# ghcr.io/<owner>/flowlogic-engine. The per-tenant docker-compose pulls this.
+name: Build FlowLogic Engine
+
+on:
+  push:
+    branches: [flowlogic-production]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      # ⚠️ If deletion breaks the build (core imports EE types), drop this step
+      #    and rely on AP_EDITION=ce at runtime instead — the EE code stays
+      #    dormant without a license key. Goal: the shipped feature set is MIT-only.
+      - name: Strip enterprise (non-MIT) code
+        run: |
+          rm -rf packages/ee || true
+          rm -rf packages/server/api/src/app/ee || true
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/flowlogic-engine:latest
+            ghcr.io/${{ github.repository_owner }}/flowlogic-engine:${{ github.sha }}

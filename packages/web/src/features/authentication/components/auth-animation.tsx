@@ -1190,8 +1190,8 @@ function AuthAnimation() {
         )}
         style={{
           height: '100%',
-          backgroundImage:
-            'url(https://cdn.activepieces.com/assets/auth-anim-bg.webp)',
+          background:
+            'radial-gradient(circle at 20% 20%, #33e0ff 0%, transparent 45%), radial-gradient(circle at 80% 80%, #a685fa 0%, transparent 45%), #0a0a0f',
         }}
       >
         {/* Scene Title - top center */}

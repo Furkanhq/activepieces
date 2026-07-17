@@ -2,7 +2,6 @@ import { t } from 'i18next';
 
 import { AnimatedIconButton } from '@/components/custom/animated-icon-button';
 import { SendIcon } from '@/components/icons/send';
-import { flagsHooks } from '@/hooks/flags-hooks';
 import { userHooks } from '@/hooks/user-hooks';
 
 export type FeatureKey =
@@ -46,28 +45,21 @@ export const RequestTrial = ({
   buttonSize = 'default',
 }: RequestTrialProps) => {
   const { data: currentUser } = userHooks.useCurrentUser();
-  const { data: flags } = flagsHooks.useFlags();
 
-  const createQueryParams = () => {
-    const params = {
-      firstName: currentUser?.firstName || '',
-      lastName: currentUser?.lastName || '',
-      email: currentUser?.email || '',
-      featureKey,
-      flags: toLatin1SafeBase64(JSON.stringify(flags ?? {})),
-    };
-
-    return Object.entries(params)
-      .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-      .join('&');
-  };
-
-  const handleClick = () =>
-    window.open(
-      `https://www.activepieces.com/sales?${createQueryParams()}`,
-      '_blank',
-      'noopener noreferrer',
+  const handleClick = () => {
+    const subject = encodeURIComponent(`FlowLogic feature request: ${featureKey}`);
+    const body = encodeURIComponent(
+      [
+        `Hi FlowLogic team,`,
+        ``,
+        `I'd like to learn more about unlocking "${featureKey}" on my engine.`,
+        ``,
+        `${currentUser?.firstName ?? ''} ${currentUser?.lastName ?? ''}`.trim(),
+        currentUser?.email ?? '',
+      ].join('\n'),
     );
+    window.location.href = `mailto:support@learnflowlogic.com?subject=${subject}&body=${body}`;
+  };
 
   return (
     <AnimatedIconButton
@@ -81,14 +73,3 @@ export const RequestTrial = ({
     </AnimatedIconButton>
   );
 };
-
-function toLatin1SafeBase64(value: string): string {
-  const latin1Safe = value
-    .split('')
-    .map((char) => {
-      const code = char.charCodeAt(0);
-      return code > 0xff ? `\\u${code.toString(16).padStart(4, '0')}` : char;
-    })
-    .join('');
-  return btoa(latin1Safe);
-}
