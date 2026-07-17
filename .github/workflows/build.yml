@@ -18,13 +18,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # ⚠️ If deletion breaks the build (core imports EE types), drop this step
-      #    and rely on AP_EDITION=ce at runtime instead — the EE code stays
-      #    dormant without a license key. Goal: the shipped feature set is MIT-only.
-      - name: Strip enterprise (non-MIT) code
-        run: |
-          rm -rf packages/ee || true
-          rm -rf packages/server/api/src/app/ee || true
+      # NOTE: we tried stripping packages/ee pre-build (run #2). It fails at
+      # `bun install --frozen-lockfile` (EE workspaces are in the lockfile), and
+      # 38 core server files import EE paths, so a compile-time strip is a
+      # refactor, not a CI step. Fallback per plan: ship the full tree and run
+      # AP_EDITION=ce so EE features stay dormant without a license key — the
+      # same shape as upstream's own community image.
 
       # Docker tags must be lowercase; github.repository_owner preserves account casing
       - name: Compute lowercase image name
