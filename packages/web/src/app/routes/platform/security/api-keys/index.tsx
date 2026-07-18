@@ -45,7 +45,6 @@ const ApiKeysPage = () => {
       lockDescription={t(
         'Create and manage API keys to access Activepieces APIs.',
       )}
-      lockVideoUrl="https://cdn.activepieces.com/videos/showcase/api-keys.mp4"
     >
       <CenteredPage
         title={t('API Keys')}

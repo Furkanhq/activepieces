@@ -5,17 +5,10 @@ import {
   SigningKey,
 } from '@activepieces/shared';
 import { t } from 'i18next';
-import {
-  ExternalLink,
-  Globe,
-  Key,
-  ListChecks,
-  ShieldCheck,
-} from 'lucide-react';
+import { Globe, Key, ListChecks, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
 
 import LockedFeatureGuard from '@/app/components/locked-feature-guard';
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { SkeletonList } from '@/components/ui/skeleton';
 import {
@@ -129,24 +122,7 @@ const EmbedPage = () => {
       <div className="w-full max-w-4/5 2xl:max-w-6xl mx-auto py-6">
         <div className="flex flex-col gap-1">
           <h1 className="text-xl font-medium">{t('Embed Onboarding')}</h1>
-          <div className="text-sm text-muted-foreground">
-            {description}
-            <Button
-              variant="link"
-              size="sm"
-              className="h-auto p-0 mt-0.5 ml-1"
-              asChild
-            >
-              <a
-                href="https://www.activepieces.com/docs/embedding/overview"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {t('Read more')}
-                <ExternalLink className="size-3" />
-              </a>
-            </Button>
-          </div>
+          <div className="text-sm text-muted-foreground">{description}</div>
         </div>
         <Separator className="mt-4 mb-12" />
 
