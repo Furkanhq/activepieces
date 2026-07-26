@@ -12,7 +12,7 @@ export default defineConfig(({ command, mode }) => {
   const isDev = command === 'serve' || mode === 'development';
 
   const AP_TITLE = 'FlowLogic';
-  const AP_FAVICON = '/logo.svg';
+  const AP_FAVICON = '/favicon.png';
 
   return {
     root: __dirname,

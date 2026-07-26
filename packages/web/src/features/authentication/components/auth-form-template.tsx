@@ -7,7 +7,6 @@ import { t } from 'i18next';
 import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
-import { useTheme } from '@/components/providers/theme-provider';
 import { authenticationSession } from '@/lib/authentication-session';
 import { useRedirectAfterLogin } from '@/lib/navigation-utils';
 import { cn } from '@/lib/utils';
@@ -132,13 +131,10 @@ const AuthLayout = ({
   children: React.ReactNode;
   isSignUp?: boolean;
 }) => {
-  const { setForceLightMode } = useTheme();
-  useEffect(() => {
-    setForceLightMode(true);
-    return () => setForceLightMode(false);
-  }, [setForceLightMode]);
+  // Upstream force-locked the auth screens to light mode. FlowLogic is a
+  // dark-themed brand, so they follow the app theme like every other page.
   return (
-    <div className="h-screen w-full overflow-hidden flex bg-white relative">
+    <div className="h-screen w-full overflow-hidden flex bg-background relative">
       {/* Form — left side */}
       <div className="flex flex-col w-full lg:w-1/2 p-5 lg:px-[100px]">
         <div className="pt-3 flex justify-center">

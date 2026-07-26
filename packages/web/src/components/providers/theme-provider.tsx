@@ -54,10 +54,12 @@ export function ThemeProvider({
     }
     const root = window.document.documentElement;
 
+    // FlowLogic is a dark-themed brand, so 'system' resolves to dark (upstream
+    // resolved it to light). Users who explicitly picked light keep light.
     const resolvedTheme = forceLightMode
       ? 'light'
       : theme === 'system'
-      ? 'light'
+      ? 'dark'
       : theme;
     root.classList.remove('light', 'dark');
     document.title = branding.websiteName;

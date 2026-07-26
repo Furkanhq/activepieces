@@ -75,7 +75,7 @@ export function generateTheme({
 export const defaultTheme = generateTheme({
     primaryColor: '#33e0ff',
     websiteName: 'FlowLogic',
-    fullLogoUrl: '/logo.svg',
-    favIconUrl: '/logo.svg',
-    logoIconUrl: '/logo.svg',
+    fullLogoUrl: '/logo-full.png',
+    favIconUrl: '/favicon.png',
+    logoIconUrl: '/logo-icon.png',
 })
