@@ -25,6 +25,7 @@ import { Label } from '@/components/ui/label';
 import { flagsHooks } from '@/hooks/flags-hooks';
 import { HttpError, api } from '@/lib/api';
 import { authenticationSession } from '@/lib/authentication-session';
+import { PORTAL_ENGINE_URL } from '@/lib/flowlogic-portal';
 import { formatUtils } from '@/lib/format-utils';
 import { useRedirectAfterLogin } from '@/lib/navigation-utils';
 
@@ -142,6 +143,23 @@ const SignInForm: React.FC = () => {
 
   return (
     <>
+      {/* FlowLogic customers never set an engine password — the Portal holds it and
+          signs them in. The password form below is kept as an operator break-glass,
+          and deliberately so: making /sign-in redirect to the Portal would loop
+          against api.ts's globalErrorHandler, which hard-navigates here on
+          SESSION_EXPIRED, and would remove the only non-SSH way in. */}
+      <div className="border-primary/30 bg-primary/5 mb-6 grid gap-2 rounded-md border p-4">
+        <p className="text-sm font-medium">{t('Sign in from your FlowLogic Portal')}</p>
+        <p className="text-muted-foreground text-xs">
+          {t('Your engine signs you in automatically — no separate password needed.')}
+        </p>
+        <a
+          href={PORTAL_ENGINE_URL}
+          className="bg-primary text-primary-foreground mt-1 inline-flex w-full items-center justify-center rounded-md px-4 py-2 text-sm font-medium"
+        >
+          {t('Go to FlowLogic Portal')}
+        </a>
+      </div>
       <Form {...form}>
         <form className="grid space-y-4">
           <FormField
