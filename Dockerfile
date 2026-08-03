@@ -1,9 +1,15 @@
 FROM node:24.14.0-bullseye-slim AS base
 
 # Set environment variables early for better layer caching
+# redis-memory-server's postinstall downloads "stable" Redis and compiles
+# rejson/redistimeseries from source, which needs a python3 interpreter this slim
+# base does not carry. It is a TEST dependency and no stage here runs the test
+# harness. Set on `base` so every derived stage inherits it — the build stage and
+# the production install both trigger that postinstall.
 ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
-    LC_ALL=en_US.UTF-8
+    LC_ALL=en_US.UTF-8 \
+    REDISMS_DISABLE_POSTINSTALL=1
 
 # Install all system dependencies in a single layer with cache mounts
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -65,17 +71,9 @@ COPY .npmrc package.json bun.lock bunfig.toml ./
 COPY packages/ ./packages/
 
 # Install all dependencies with frozen lockfile.
-#
-# REDISMS_DISABLE_POSTINSTALL: redis-memory-server is a TEST dependency whose
-# postinstall downloads "stable" Redis and compiles its modules (rejson,
-# redistimeseries) from source — which needs a python3 interpreter this slim image
-# does not carry, so the build died with "Cannot find python3 interpreter".
-#
-# Note the lockfile does NOT pin that download: "stable" is a moving target, so this
-# started failing on an unchanged tree. The production image never runs the test
-# harness, so skipping the postinstall is the fix — installing python3 here would
-# just pay to compile Redis modules we then throw away.
-ENV REDISMS_DISABLE_POSTINSTALL=1
+# (REDISMS_DISABLE_POSTINSTALL is set on `base` — see the note there. The lockfile
+# pins the package but NOT the Redis build it downloads, so "stable" moving upstream
+# broke this on a tree we had not touched.)
 RUN --mount=type=cache,target=/root/.bun/install/cache \
     bun install --frozen-lockfile
 
