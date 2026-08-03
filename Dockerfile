@@ -64,7 +64,18 @@ WORKDIR /usr/src/app
 COPY .npmrc package.json bun.lock bunfig.toml ./
 COPY packages/ ./packages/
 
-# Install all dependencies with frozen lockfile
+# Install all dependencies with frozen lockfile.
+#
+# REDISMS_DISABLE_POSTINSTALL: redis-memory-server is a TEST dependency whose
+# postinstall downloads "stable" Redis and compiles its modules (rejson,
+# redistimeseries) from source — which needs a python3 interpreter this slim image
+# does not carry, so the build died with "Cannot find python3 interpreter".
+#
+# Note the lockfile does NOT pin that download: "stable" is a moving target, so this
+# started failing on an unchanged tree. The production image never runs the test
+# harness, so skipping the postinstall is the fix — installing python3 here would
+# just pay to compile Redis modules we then throw away.
+ENV REDISMS_DISABLE_POSTINSTALL=1
 RUN --mount=type=cache,target=/root/.bun/install/cache \
     bun install --frozen-lockfile
 
